@@ -1,0 +1,101 @@
+.model small
+.data
+dividend_msg db 'Enter the dividend: $'
+divisor_msg db 'Enter the divisor: $'
+result_msg db 'Quotient: $'
+remainder_msg db 'Remainder: $'
+newline db 13, 10, '$'  ; CR and LF for a new line
+
+dividend db ?
+divisor db ?
+quotient db ?
+remainder db ?
+
+.code
+mov ax, @data
+mov ds, ax
+
+; Input dividend
+mov dx, offset dividend_msg
+mov ah, 9
+int 21h
+
+mov ah, 01h
+int 21h
+sub al, 48   ; Convert ASCII to integer
+mov [dividend], al
+
+; Print a new line
+mov dx, offset newline
+mov ah, 9
+int 21h
+
+; Input divisor
+mov dx, offset divisor_msg
+mov ah, 9
+int 21h
+
+mov ah, 01h
+int 21h
+sub al, 48   ; Convert ASCII to integer
+mov [divisor], al
+
+; Check if the divisor is zero (division by zero)
+cmp al, 0
+je division_by_zero
+
+; Divide the numbers
+mov al, [dividend]
+mov bl, [divisor]
+xor ah, ah  ; Clear AH to ensure AX is a 16-bit value
+
+div bl
+
+mov [quotient], al
+mov [remainder], ah
+; Print a new line
+mov dx, offset newline
+mov ah, 9
+int 21h
+
+; Display the quotient
+mov dx, offset result_msg
+mov ah, 9
+int 21h
+
+mov dl, [quotient]
+add dl, 48
+mov ah, 2
+int 21h
+
+; Print a new line
+mov dx, offset newline
+mov ah, 9
+int 21h
+
+; Display the remainder
+mov dx, offset remainder_msg
+mov ah, 9
+int 21h
+
+mov dl, [remainder]
+add dl, 48
+mov ah, 2
+int 21h
+
+jmp end_program
+
+division_by_zero:
+mov dx, offset result_msg
+mov ah, 9
+int 21h
+mov dx, offset division_by_zero_msg
+int 21h
+
+end_program:
+mov ah, 4ch
+int 21h
+
+.data
+division_by_zero_msg db 'Division by zero is not allowed!$'
+end
