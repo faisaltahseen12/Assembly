@@ -1,0 +1,75 @@
+.model small
+.stack 100h
+.data 
+msg db "Enter 5 Numbers: $"
+msg1 db 0ah,0dh,"Enter a Number to Delete: $"
+msg2 db 0ah,0dh,"The Remaining Numbers: $"
+array db 5 dup (0) ; Change the array size to 5
+
+.code
+mov ax, @data
+mov ds, ax
+
+; Prompt the user to enter 5 numbers
+mov dx, offset msg
+mov ah, 09h
+int 21h
+
+mov si, 0
+mov cx, 5
+input_numbers: 
+mov ah, 1
+int 21h
+mov [array+si], al
+inc si
+loop input_numbers
+
+; Ask the user for a number to delete
+mov dx, offset msg1
+mov ah, 09h
+int 21h
+
+mov ah, 1
+int 21h
+mov bl, al
+
+; Find and delete the entered number from the array
+mov si, 0
+mov cx, 5
+delete_number:
+mov al, [array+si]
+cmp bl, al
+jne not_equal
+delete:
+mov di, si
+mov cx, 5
+shift_numbers:
+mov al, [array+di+1]
+mov [array+di], al
+inc di
+loop shift_numbers
+not_equal:
+inc si
+loop delete_number
+
+; Display the remaining numbers
+mov dx, offset msg2
+mov ah, 09h
+int 21h
+
+mov si, 0
+mov cx, 5
+output_numbers:
+mov dl, [array+si]
+cmp dl, 0
+je end_output
+mov ah, 2
+int 21h
+end_output:
+inc si
+loop output_numbers
+
+mov ah, 4ch
+int 21h
+
+end
