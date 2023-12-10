@@ -1,0 +1,75 @@
+.model small
+.stack 100h
+.data 
+msg db "Enter 5 Numbers: $"
+msg1 db 0ah,0dh,"Enter a Number that you swap: $"
+msg11 db 0ah,0dh,"Enter a Number  that you with number: $"
+msg2 db 0ah,0dh,"The Array After Swapping: $"
+array db 5 dup (0) ; Change the array size to 5
+
+.code
+mov ax, @data
+mov ds, ax
+
+; Prompt the user to enter 5 numbers
+mov dx, offset msg
+mov ah, 09h
+int 21h
+
+mov si, 0
+mov cx, 5
+input_numbers: 
+mov ah, 1
+int 21h
+mov [array+si], al
+inc si
+loop input_numbers
+
+; Ask the user for a number to swap
+mov dx, offset msg1
+mov ah, 09h
+int 21h
+
+mov ah, 1
+int 21h
+mov bl, al
+
+; Ask the user for a number to swap with
+mov dx, offset msg11
+mov ah, 09h
+int 21h
+
+mov ah, 1
+int 21h
+mov bh, al
+
+; Find and swap the entered number with the given number in the array
+mov si, 0
+mov cx, 5
+swap_numbers:
+mov al, [array+si]
+cmp bl, al
+jne not_equal
+; Swap the numbers
+mov [array+si], bh
+not_equal:
+inc si
+loop swap_numbers
+
+; Display the array after swapping
+mov dx, offset msg2
+mov ah, 09h
+int 21h
+
+mov si, 0
+mov cx, 5
+output_numbers:
+mov dl, [array+si]
+mov ah, 2
+int 21h
+inc si
+loop output_numbers
+
+mov ah, 4ch
+int 21h
+end
