@@ -1,1 +1,276 @@
+# Addition
+.model small
+.data
+msg1 db 'Enter The First Number: $' ;Display Msg Using Define Bytes
+msg2 db 'Enter The Second Number: $';Display Msg Using Define Bytes
+msg3 db 'Result: $' ;Display Msg Using Define Bytes
 
+.code
+mov ax, @data ;ax Used for Input (16-Bit)
+mov ds, ax    ;To display Msg Input Store to Ds (16-bit)
+
+mov dx, offset msg1
+mov ah, 9     ;Display The String Msg( to display string we use 9)
+int 21h
+
+; Input first number
+mov ah, 01h  ;Get input from User (8-bit)
+int 21h      ;interrupt call to mov the next Instruction
+sub al, 48   ; Convert ASCII to integer
+mov bl, al   ;Mov Data to bl to Reuse al again for input
+
+mov dx, 10   ;This is Used To add Newline
+mov ah, 2    ;To call Display 
+int 21h      ;interrupt call to mov the next Instruction
+
+mov dx, offset msg2
+mov ah, 9    ;Display The String Msg( to display string we use 9)
+int 21h      ;interrupt call to mov the next Instruction
+
+; Input second number
+mov ah, 01h  ;Get input from User (8-bit)
+int 21h      ;interrupt call to mov the next Instruction
+sub al, 48   ; Convert ASCII to integer
+add bl, al   ; Add the numbers
+
+mov dx, 10   ;This is Used To add Newline
+mov ah, 2    ;To call Display 
+int 21h      ;interrupt call to mov the next Instruction
+
+mov dx, offset msg3
+mov ah, 9    ;Display The String Msg( to display string we use 9)
+int 21h      ;interrupt call to mov the next Instruction
+
+
+; Convert and display the result
+add bl, 48   ; Convert integer to ASCII
+mov dl, bl   ; Load The data Register to Display Result
+mov ah, 2    ;To call Display 
+int 21h      ;interrupt call to mov the next Instruction
+
+mov dx, 10   ;This is Used To add Newline
+mov ah, 2    ;To call Display 
+int 21h      ;interrupt call to mov the next Instruction
+
+
+mov ah, 4ch  ;Used to Terminate the whole Program Execution
+int 21h      ;interrupt call to mov the next Instruction
+
+end
+
+#Substraction
+.model small
+.data
+msg1 db 'Enter The First Number: $'
+msg2 db 'Enter The Second Number: $'
+msg3 db 'Result: $'
+
+.code
+mov ax, @data
+mov ds, ax
+
+mov dx, offset msg1
+mov ah, 9
+int 21h
+
+; Input first number
+mov ah, 01h
+int 21h
+sub al, 48   ; Convert ASCII to integer
+mov bl, al
+
+mov dx, 10
+mov ah, 2
+int 21h
+
+mov dx, offset msg2
+mov ah, 9
+int 21h
+
+; Input second number
+mov ah, 01h
+int 21h
+sub al, 48   ; Convert ASCII to integer
+sub bl, al   ; Subtract the numbers
+
+mov dx, 10
+mov ah, 2
+int 21h
+
+mov dx, offset msg3
+mov ah, 9
+int 21h
+
+; Convert and display the result
+add bl, 48   ; Convert integer to ASCII
+mov dl, bl
+mov ah, 2
+int 21h
+
+mov dx, 10
+mov ah, 2
+int 21h
+
+mov ah, 4ch
+int 21h
+end
+
+#Multiplication
+.model small
+.data
+msg1 db 'Enter The First Number: $'
+msg2 db 'Enter The Second Number: $'
+msg3 db 'Result: $'
+newline db 13, 10, '$'  ; CR and LF for a new line
+
+.code
+mov ax, @data
+mov ds, ax
+
+mov dx, offset msg1
+mov ah, 9
+int 21h
+
+; Input first number
+mov ah, 01h
+int 21h
+sub al, 48   ; Convert ASCII to integer
+mov bl, al
+
+; Print a new line
+mov dx, offset newline
+mov ah, 9
+int 21h
+
+mov dx, offset msg2
+mov ah, 9
+int 21h
+
+; Input second number
+mov ah, 01h
+int 21h
+sub al, 48   ; Convert ASCII to integer
+
+; Print a new line
+mov dx, offset newline
+mov ah, 9
+int 21h
+
+mul bl       ; Multiply the numbers (AX = AL * BL)
+
+mov dx, offset msg3
+mov ah, 9
+int 21h
+
+; Convert and display the result
+add ax, 30h  ; Convert integer to ASCII in AX
+mov dx, ax     ; Load the result into DX
+mov ah, 2
+int 21h
+
+mov ah, 4ch
+int 21h  ; Terminate program
+end
+
+#Division
+.model small
+.data
+dividend_msg db 'Enter the dividend: $'
+divisor_msg db 'Enter the divisor: $'
+result_msg db 'Quotient: $'
+remainder_msg db 'Remainder: $'
+newline db 13, 10, '$'  ; CR and LF for a new line
+
+dividend db ?
+divisor db ?
+quotient db ?
+remainder db ?
+
+.code
+mov ax, @data
+mov ds, ax
+
+; Input dividend
+mov dx, offset dividend_msg
+mov ah, 9
+int 21h
+
+mov ah, 01h
+int 21h
+sub al, 48   ; Convert ASCII to integer
+mov [dividend], al
+
+; Print a new line
+mov dx, offset newline
+mov ah, 9
+int 21h
+
+; Input divisor
+mov dx, offset divisor_msg
+mov ah, 9
+int 21h
+
+mov ah, 01h
+int 21h
+sub al, 48   ; Convert ASCII to integer
+mov [divisor], al
+
+; Check if the divisor is zero (division by zero)
+cmp al, 0
+je division_by_zero
+
+; Divide the numbers
+mov al, [dividend]
+mov bl, [divisor]
+xor ah, ah  ; Clear AH to ensure AX is a 16-bit value
+
+div bl
+
+mov [quotient], al
+mov [remainder], ah
+; Print a new line
+mov dx, offset newline
+mov ah, 9
+int 21h
+
+; Display the quotient
+mov dx, offset result_msg
+mov ah, 9
+int 21h
+
+mov dl, [quotient]
+add dl, 48
+mov ah, 2
+int 21h
+
+; Print a new line
+mov dx, offset newline
+mov ah, 9
+int 21h
+
+; Display the remainder
+mov dx, offset remainder_msg
+mov ah, 9
+int 21h
+
+mov dl, [remainder]
+add dl, 48
+mov ah, 2
+int 21h
+
+jmp end_program
+
+division_by_zero:
+mov dx, offset result_msg
+mov ah, 9
+int 21h
+mov dx, offset division_by_zero_msg
+int 21h
+
+end_program:
+mov ah, 4ch
+int 21h
+
+.data
+division_by_zero_msg db 'Division by zero is not allowed!$'
+end
