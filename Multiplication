@@ -1,0 +1,55 @@
+.model small
+.data
+msg1 db 'Enter The First Number: $'
+msg2 db 'Enter The Second Number: $'
+msg3 db 'Result: $'
+newline db 13, 10, '$'  ; CR and LF for a new line
+
+.code
+mov ax, @data
+mov ds, ax
+
+mov dx, offset msg1
+mov ah, 9
+int 21h
+
+; Input first number
+mov ah, 01h
+int 21h
+sub al, 48   ; Convert ASCII to integer
+mov bl, al
+
+; Print a new line
+mov dx, offset newline
+mov ah, 9
+int 21h
+
+mov dx, offset msg2
+mov ah, 9
+int 21h
+
+; Input second number
+mov ah, 01h
+int 21h
+sub al, 48   ; Convert ASCII to integer
+
+; Print a new line
+mov dx, offset newline
+mov ah, 9
+int 21h
+
+mul bl       ; Multiply the numbers (AX = AL * BL)
+
+mov dx, offset msg3
+mov ah, 9
+int 21h
+
+; Convert and display the result
+add ax, 30h  ; Convert integer to ASCII in AX
+mov dx, ax     ; Load the result into DX
+mov ah, 2
+int 21h
+
+mov ah, 4ch
+int 21h  ; Terminate program
+end
