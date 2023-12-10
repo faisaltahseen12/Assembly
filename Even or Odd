@@ -1,0 +1,44 @@
+.model small
+.data
+msg db "Enter a number: $"   ; Display message to prompt for input
+number db ?                 ; Variable to store the user's input
+even_msg db "Given Number is even $"    ; Message for even numbers
+odd_msg db " Given Number is odd $"     ; Message for odd numbers
+
+.code
+mov ax, @data               ; Load the data segment into AX
+mov ds, ax                  ; Initialize DS with the data segment
+
+mov dx, offset msg          ; Display the input prompt message
+mov ah, 09h                ; Set AH to 9 to display a string
+int 21h                    ; Call DOS interrupt for string display
+
+mov ah, 01h                ; Function to read a character from standard input
+int 21h                    ; Call DOS interrupt
+sub al, 30h                ; Convert ASCII character to a numeric value
+mov bl, al                 ; Copy the input to BL register for later use
+
+mov dl, 0Ah                ; Newline character
+mov ah, 02h                ; Function to display a character
+int 21h                    ; Call DOS interrupt to display newline
+
+test bl, 1                 ; Check the copied value in BL for odd/even
+jz is_even                 ; Jump to the "is_even" label if the value is even
+mov dx, offset odd_msg     ; Set the message to display "odd"
+jmp print_result           ; Jump to the "print_result" section
+
+is_even:
+mov dx, offset even_msg    ; Set the message to display "even"
+
+print_result:
+mov ah, 09h                ; Function to display a string
+int 21h                    ; Call DOS interrupt to display the result
+
+mov dl, 0Ah                ; Newline character
+mov ah, 02h                ; Function to display a character
+int 21h                    ; Call DOS interrupt to display newline
+
+mov ah, 4ch                ; DOS function to exit the program
+int 21h                    ; Call DOS interrupt to exit
+
+end
