@@ -1,0 +1,61 @@
+.model small
+.data
+msg db 'Enter First Number: $'
+msgg db 'Enter Second Number: $'
+msg1 db 'Given Numbers are Equal$'
+msg2 db 'Given Numbers are Not Equal$'
+newline db 13, 10, '$' ; CR and LF for a new line
+
+.code
+mov ax, @data
+mov ds, ax
+
+; Input msg
+mov dx, offset msg
+mov ah, 9
+int 21h
+
+; Input from the user
+mov ah, 01h
+int 21h
+sub al, 48
+mov bl, al
+
+; New line
+mov dx, offset newline
+mov ah, 9
+int 21h
+
+; Second input msg
+mov dx, offset msgg
+mov ah, 9
+int 21h
+
+; Input second number
+mov ah, 01h
+int 21h
+sub al, 48
+
+; New line
+mov dx, offset newline
+mov ah, 9
+int 21h
+; Compare the numbers
+cmp bl, al
+je l1
+
+l2:
+mov dx, offset msg2
+mov ah, 9
+int 21h
+jmp end_program
+
+l1:
+mov dx, offset msg1
+mov ah, 9
+int 21h
+
+end_program:
+mov ah, 4ch
+int 21h
+end
