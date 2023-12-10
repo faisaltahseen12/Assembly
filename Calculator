@@ -1,0 +1,158 @@
+.model small
+.data
+Msg1 db "Select an arithmatic operation: $"
+Msg2 db "Enter a Number: $"
+.code
+Mov ax, @data
+mov ds, ax
+
+jmp start
+
+Division:
+call newLine
+call printMsg
+
+mov ah, 01h
+int 21h
+
+mov bl, al
+sub bx, 30h
+
+call newLine
+call printMsg
+
+mov ah, 01h
+int 21h
+mov cl, al
+sub cx, 30h
+
+call newLine
+
+mov ax, bx
+mov dx, 0   
+div cx
+
+mov bx, ax 
+add bx, 30h
+
+mov dl, bl
+mov ah, 02h 
+int 21h
+
+jmp done
+
+start:
+mov dx, offset Msg1
+mov ah, 09h
+int 21h
+Mov ah, 01h
+int 21h
+
+cmp al, '+'
+je Addition
+cmp al, '*'
+je Multiply
+cmp al, '-'
+je Subtraction
+cmp al, '/'
+je Division
+
+done:
+mov ah, 4ch
+int 21h
+
+Multiply:
+call newLine
+call printMsg
+Mov ah, 01h
+int 21h
+mov bl, al
+sub bx, 30h
+call newLine
+
+call printMsg
+mov ah, 01h
+int 21h
+
+Mov cl, al
+call newLine
+Sub cx, 30h
+Mov ax, cx
+Mul bx
+
+Mov dx, ax
+Add dx, 30h
+mov ah, 02h
+int 21h
+
+jmp done
+
+
+Addition:
+call newLine
+call printMsg
+
+Mov ah, 01h
+int 21h
+
+mov bl, al
+call newLine
+sub bl, 30h
+
+Call printMsg
+
+Mov ah, 01h
+int 21h
+Sub al, 30h
+Add bl, al
+call newLine
+
+Mov dl, bl
+Add dl, 30h
+mov ah, 02h
+int 21h
+
+jmp done
+
+Subtraction:
+call newLine
+call printMsg
+
+Mov ah, 01h
+int 21h
+
+mov bl, al
+call newLine
+sub bl, 30h
+
+Call printMsg
+
+Mov ah, 01h
+int 21h
+Sub al, 30h
+sub bl, al
+call newLine
+
+Mov dl, bl
+Add dl, 30h
+mov ah, 02h
+int 21h
+
+jmp done
+
+
+printMsg proc
+Mov dx, offset Msg2
+mov ah, 09h
+int 21h
+ret
+endp printMsg
+
+newLine proc
+Mov dl, 0ah
+mov ah, 02h
+int 21h
+ret
+endp newLine
+
+end
