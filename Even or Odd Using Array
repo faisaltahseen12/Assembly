@@ -1,0 +1,69 @@
+.model small
+.data
+msg db "Enter a number: $"
+array db 5 dup(0)
+count db 5
+even_msg db " is even $"
+odd_msg db " is odd $"
+
+.code
+mov ax, @data
+mov ds, ax
+
+mov cx, 5
+mov si, 0      
+
+input_loop:
+mov dx, offset msg
+mov ah, 09h
+int 21h
+
+mov ah, 01h  
+int 21h
+sub al, 30h  
+mov [array + si], al
+inc si
+
+mov dl, 0Ah     
+mov ah, 02h
+int 21h
+
+loop input_loop
+
+mov cx, 5       
+mov si, 0       
+mov al, 0      
+
+display_elements:
+mov al, [array + si] 
+add al, 30h          
+mov dl, al     
+mov ah, 02h
+int 21h
+
+test al, 1
+jz is_even
+mov dx, offset odd_msg
+jmp print_result
+
+is_even:
+mov dx, offset even_msg
+
+print_result:
+mov ah, 09h
+int 21h
+mov dl, 0Ah
+mov ah, 02h
+int 21h
+
+
+inc si
+loop display_elements
+
+mov dl, 0Ah   
+mov ah, 02h
+int 21h
+
+mov ah, 4ch   
+int 21h
+end
