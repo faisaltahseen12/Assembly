@@ -1,0 +1,66 @@
+.model small 
+.stack 100h
+.data
+msg db 0ah,0dh,"Enter the character $" 
+msg3 db 0ah, 0dh,"Character is Vowel $"
+msg4 db 0ah, 0dh,"Character is not Vowel $"
+.code
+
+
+;Load your data segment
+mov ax, @data
+mov ds, ax 
+start:
+
+; Tell the user to select an operation
+Mov dx, offset msg
+mov ah, 09h
+int 21h
+
+;Get an operation from the user
+Mov ah, 01h
+int 21h
+
+
+
+cmp al, 'a'
+je msg1
+
+cmp al, 'e'
+je msg1
+
+cmp al, 'i'
+je msg1    
+
+cmp al, 'o'
+je msg1 
+
+cmp al, 'u'
+je msg1
+
+
+mov ah, 09h
+mov dx, offset msg4
+int 21h
+
+
+  
+
+mov ah, 4ch
+int 21h
+
+
+msg1 proc 
+
+Mov dx, offset msg3
+mov ah, 09h
+int 21h
+jmp start
+
+endp msg1
+ 
+
+
+
+
+end
