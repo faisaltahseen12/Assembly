@@ -1,0 +1,62 @@
+.model small
+.stack 100h
+.data
+array db 5 dup (?)       ; Array to store 5 numbers
+msg db "Enter 5 numbers: $"   ; Prompt message
+result_msg db 0ah, 0dh, "Smallest Number is: $"   ; Result message
+
+.code
+mov ax, @data
+mov ds, ax
+
+mov si, 0            ; Initialize array index to 0
+mov cx, 5            ; Set loop counter to 5
+
+; Display the prompt for user input
+mov dx, offset msg    ; Load address of the message
+mov ah, 09h           ; Function to display a string
+int 21h
+
+input:
+mov ah, 1            ; Function to read a character
+int 21h
+
+; Convert the character to its integer equivalent
+sub al, 48            ; Convert ASCII character to integer
+mov [array+si], al   ; Store the integer in the array
+inc si                ; Increment array index
+loop input            ; Repeat for 5 characters
+
+mov ax, 127          ; Initialize result (smallest number) to a large value
+mov si, 0            ; Reset array index to 0
+mov cx, 5            ; Reset loop counter to 5
+mov bl, [array+si]   ; Initialize bl with the first element of the array
+
+lopp:
+mov al, [array+si]    ; Load current array element into al
+cmp bl, al            ; Compare with the current smallest number
+JG small              ; Jump if al is greater than bl
+
+again:
+inc si                ; Move to the next element in the array
+loop lopp             ; Continue looping
+
+; Display "Smallest Number is: " message
+mov dx, offset result_msg  ; Load address of the result message
+mov ah, 09h               ; Function to display a string
+int 21h
+
+; Display the result on the same line
+mov dl, bl                ; Load the smallest number into dl
+add dl, 48                ; Convert the smallest number to ASCII
+mov ah, 2                 ; Function to display a character
+int 21h
+
+mov ah, 4ch               ; Terminate the program
+int 21h
+
+small:
+mov bl, [array+si]        ; Update bl with the current smallest number
+jmp again
+
+end
