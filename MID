@@ -1,0 +1,75 @@
+.model small
+.data
+msg db 0ah, 0dh, "Enter the range $"
+array1 db 5 dup(0)
+array2 db 5 dup(0)
+num1 db 0
+num2 db 0
+.code
+mov ax, @data
+mov ds, ax
+Mov dx, offset msg
+mov ah, 09h
+int 21h
+
+Mov ah, 01h
+int 21h
+
+sub al, 30h
+mov [num1], al
+
+
+mov ah, 01h
+int 21h
+
+sub al, 30h
+mov [num2], al
+
+Mov si, 0
+mov di, 0
+Mov cl, [num2]
+
+mov ah, 02h
+mov dl, 0ah
+int 21h
+
+FindDiv:
+mov ax, cx
+mov dx, 0
+mov bx, 3
+div bx
+cmp dx, 0
+je AddToArray
+Mov dx, cx
+mov ah, 02h
+add dx, 30h
+int 21h
+cmp [num1], cl
+je displayy
+loop FindDiv
+
+AddToArray:
+mov [array1 + si], cl
+inc si
+cmp [num1], cl
+je displayy
+loop FindDiv
+
+displayy:
+mov cx, si
+mov si, 0
+mov ah, 02h
+mov dl, 0ah
+int 21h
+print1:
+mov dl, [array1 + si]
+add dl, 30h
+mov ah, 02h
+int 21h
+inc si
+loop print1
+
+Done:
+mov ah, 4ch
+int 21h
+end
